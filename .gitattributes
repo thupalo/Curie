@@ -1,0 +1,5 @@
+# Normalise line endings in the repository; check out with the platform default.
+* text=auto
+*.abap text
+*.ps1 text eol=crlf
+*.png binary

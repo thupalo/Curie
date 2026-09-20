@@ -1,0 +1,4 @@
+# The package itself (editable) with the development extras; the pinned
+# dependencies live in pyproject.toml. Curie runs on NW RFC SDK 7.20 through
+# src/curie/sapnwrfc720.py (ctypes, standard library); no pyrfc.
+-e .[dev]

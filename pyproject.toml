@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curie-sap"
+version = "1.0.0"
+description = "LLM chat inside SAP over RFC (R/3 4.5B and ECC): registered RFC server, tools, ABAP execution, web UI"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv==1.2.3",
+    "fastapi==0.115.6",
+    "uvicorn==0.32.1",
+    "openai==1.59.7",
+    "pyyaml==6.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "httpx==0.28.1",
+    "markdown==3.7",
+]
+
+[project.scripts]
+curie = "curie.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"curie.web" = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:cacheprovider"

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<title>Curie</title>
+<link rel="stylesheet" href="/static/style.css">
+
+<!--
+  Optional libraries from cdnjs (pinned). They are loaded `async` so that a
+  slow or unreachable CDN never blocks the page: app.js checks for them at
+  render time and re-renders once they arrive. Without them the page still
+  works (markdown shown as plain text, code without highlighting, and the
+  built-in allow-list sanitizer is always applied).
+-->
+<script async id="lib-marked"
+        src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async id="lib-hljs"
+        src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script async id="lib-purify"
+        src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script defer src="/static/app.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand" title="Curie">Curie</div>
+
+  <div class="sap-id" id="sap-id" hidden aria-label="SAP system identity">
+    <span class="sap-field"><span class="k">SID</span><span class="v" id="sap-sysid">—</span></span>
+    <span class="sap-field"><span class="k">Client</span><span class="v" id="sap-client">—</span></span>
+    <span class="sap-field"><span class="k">User</span><span class="v" id="sap-user">—</span></span>
+    <span class="sap-field"><span class="k">Release</span><span class="v" id="sap-release">—</span></span>
+  </div>
+
+  <div class="status" aria-live="polite">
+    <span class="indicator" title="SAP heartbeat">
+      <span class="dot" id="dot-sap"></span><span class="dot-label">SAP</span>
+    </span>
+    <span class="indicator" title="Language model">
+      <span class="dot" id="dot-llm"></span><span class="dot-label">LLM</span>
+    </span>
+    <span class="status-text" id="status-text">Connecting…</span>
+  </div>
+</header>
+
+<div class="transcript-wrap">
+  <main id="transcript" class="transcript" aria-label="Conversation">
+    <div id="feed" class="feed"></div>
+  </main>
+  <button id="jump" class="jump" type="button" hidden>&#8595; Latest</button>
+</div>
+
+<footer class="composer">
+  <label class="visually-hidden" for="input">Message</label>
+  <textarea id="input" rows="2"
+            placeholder="Ask Curie about this SAP system…  (Enter to send, Shift+Enter for a new line, /reset to start over)"
+            autocomplete="off" spellcheck="true"></textarea>
+  <div class="composer-actions">
+    <button id="send" class="btn primary" type="button" disabled>Send</button>
+    <button id="stop" class="btn danger" type="button" hidden>Stop</button>
+  </div>
+</footer>
+
+<div id="overlay" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+  <div class="overlay-card">
+    <h2 id="overlay-title">Session ended</h2>
+    <p id="overlay-reason"></p>
+    <p class="muted">You can close this window. Start transaction <code>ZAI</code> in SAP to open a new session.</p>
+  </div>
+</div>
+
+<noscript>
+  <div class="overlay"><div class="overlay-card"><h2>JavaScript required</h2><p>Curie needs JavaScript to talk to the server.</p></div></div>
+</noscript>
+
+</body>
+</html>

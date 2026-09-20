@@ -1,0 +1,50 @@
+# Secrets -- .env holds the SAP logon; commit .env.example instead
+.env
+
+# Virtualenv and bytecode
+venv/
+__pycache__/
+*.egg-info/
+build/
+*.py[cod]
+
+# NW RFC SDK traces and server logs
+*.trc
+dev_rfc.log
+rfc_server*.log
+Trace/
+
+# SAP downloads (licensed, large -- fetch from SAP Support Portal)
+*.SAR
+*.zip
+
+# Curie session audit logs (JSONL, may hold business data)
+logs/
+
+# generated from docs/*.md by docs/build_html.py
+docs/curie-docs.html
+
+# CHAT from SAP
+CHAT_INTERFACE.md
+
+# Everything that accumulates knowledge and history belongs to the
+# installation, not to the product: the notes of every type, the
+# families, the reports (EVAL*.md, REVIEW.md), the system card, the
+# trash, the compiled bundle and the Obsidian vault state. Only the
+# README that documents the note format is tracked.
+knowledge/*
+!knowledge/README.md
+
+# persisted dictionary caches (curie --cache)
+cache/
+
+# the archive (SQLite, built from the session logs; business data)
+/archive/
+
+# console and task logs of the service and the application
+service/logs/
+*.log
+
+# temporary and local files
+tmp/
+local/
