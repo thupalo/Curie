@@ -2,10 +2,13 @@
 
 ## Curie host
 
-Requirements: Windows, Python 3.12, NW RFC SDK 7.20 (7.21) unpacked to
-`C:\nwrfcsdk` (or set `SAPNWRFC720_HOME`), network access to the SAP
-gateway and to the LLM endpoint. The SDK comes from the SAP Support Portal
-(SAP Note 1025361) and is not in the repository.
+Requirements: Windows, Python 3.12, one NW RFC SDK unpacked to
+`C:\nwrfcsdk` (or set `SAPNWRFC720_HOME`): 7.50 for a Unicode backend
+(ECC 6 and newer), 7.20 (7.21) for a non-Unicode backend such as R/3
+4.5B, which rejects a 7.50 server with `CALL_FUNCTION_FORMAT_NOT_SUP`;
+network access to the SAP gateway and to the LLM endpoint. The SDK comes
+from the SAP Support Portal (SAP Note 1025361) and is not in the
+repository.
 
 ```powershell
 cd sap_ai_chat

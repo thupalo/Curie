@@ -95,7 +95,7 @@ state to migrate; the session logs are append-only files.
 | `--check`: `RFC_ASHOST is not set` and friends | `.env` not found or values empty; it is looked for in `sap_ai_chat/` and one level up |
 | `--check`: `SAP_RELEASE must be one of` | An inline comment after an empty value in an old `config.py`; fixed, but keep `SAP_RELEASE=` clean |
 | `FU_NOT_FOUND` at startup | A served FM does not exist in the backend; install the `ZAIC` group first |
-| `CALL_FUNCTION_FORMAT_NOT_SUP` | A 7.50-based server answered a pre-4.6C backend; Curie must run on SDK 7.20 |
+| `CALL_FUNCTION_FORMAT_NOT_SUP` | A 7.50-based server answered a non-Unicode backend (pre-4.6C, or any non-Unicode kernel); against such a system Curie must run on SDK 7.20. Unicode backends work with 7.50 |
 | `Could not open the ICU common library` | `SAPNWRFC720_HOME` wrong, or a 7.50 lib directory on PATH |
 | Registration refused | Gateway ACL (`reg_info`, `gw/reg_no_conn_info`) |
 | `Z_AI_SESSION_OPEN not found` from SAP | Another server holds the Program ID; stop it |

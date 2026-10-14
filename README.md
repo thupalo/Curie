@@ -4,7 +4,9 @@ Curie is a Python service that puts an LLM chat inside SAP. A user starts
 transaction `ZAI` in the SAP GUI, a Chrome window opens, and the model can
 read tables and the dictionary through RFC, write ABAP reports, and run them
 in SAP after a syntax check, a security review and the user's confirmation.
-It works with **ECC 6** and even with **SAP R/3 4.5B** (non-Unicode, NW RFC SDK 7.20 required) 
+It works with **ECC 6** and newer, and even with **SAP R/3 4.5B**: a Unicode
+system runs on NW RFC SDK 7.50, an old non-Unicode system needs NW RFC SDK
+7.20 (see Requirements).
 
 The full documentation is in [docs/](docs/README.md): architecture,
 installation, configuration reference, SAP objects, session lifecycle, the
@@ -34,13 +36,18 @@ https://youtu.be/Mun0lyA23ro
 | | |
 |---|---|
 | Python | 3.12 (Windows) |
-| NW RFC SDK 7.50 or NW RFC SDK 7.20 | `C:\nwrfcsdk` (`SAPNWRFC720_HOME`) — the only SDK; both directions use it |
+| NW RFC SDK 7.50 (Unicode systems) or 7.20 (non-Unicode systems such as 4.5B) | `C:\nwrfcsdk` (`SAPNWRFC720_HOME`) — one SDK for both directions; never two generations in one process |
 | SAP side | SM59 destination `SAP_AI` (type T, registered server), the `ZAIC` package (function group `ZAIC`, reports, transaction `ZAI`) from [abap/](abap/) |
 | LLM | any endpoint with the OpenAI chat completions API (OpenAI, Azure, vLLM, Ollama, ...) |
 | End-user PC | Chrome, network access to `WEB_PUBLIC_URL` |
 
 The SDK comes from the SAP Support Portal (SAP Note 1025361) and is not in
-this repository. pyrfc is not needed any more.
+this repository. 7.50 works well against Unicode backends (ECC 6 and
+newer, S/4HANA). Against a non-Unicode backend such as R/3 4.5B only 7.20
+works: a 7.50 server answers in Unicode, which the old kernel rejects with
+`CALL_FUNCTION_FORMAT_NOT_SUP`, while 7.20 answers in the backend's
+codepage and reaches back to 4.0B. The binding loads either one. pyrfc is
+not needed.
 
 ## Setup
 
@@ -144,7 +151,7 @@ need a decision:
 |---|---|
 | [src/curie/cli.py](src/curie/cli.py) | entry point (`curie`, `python -m curie`): RFC server threads + uvicorn in one process, `--check`, `--selftest` |
 | [src/curie/config.py](src/curie/config.py) | settings, release profiles, ISO → SAP language key |
-| [src/curie/sapnwrfc720.py](src/curie/sapnwrfc720.py) | ctypes binding to NW RFC SDK 7.20 (7.50): `Server` and `Client` |
+| [src/curie/sapnwrfc720.py](src/curie/sapnwrfc720.py) | ctypes binding to the NW RFC SDK, 7.50 or 7.20: `Server` and `Client` |
 | [rfc/client.py](src/curie/rfc/client.py) | connection pool, blocking and async calls, interface-aware `call_known` |
 | [handlers/](src/curie/handlers/) | function modules served to SAP; `session.py` holds the `Z_AI_*` ones |
 | [sessions/](src/curie/sessions/) | session model, state machine, `SessionManager`, JSONL audit log |
@@ -158,14 +165,15 @@ need a decision:
 ## The RFC server underneath
 
 Curie's server direction is the registered RFC server this repository started
-as. Use NW RFC SDK 7.50 or NW RFC SDK 7.20 (non-unicode) The reasons for the NW RFC SDK, the handler contract, parallel calls and
+as. The choice of SDK, the handler contract, parallel calls and
 troubleshooting are unchanged:
 
-- **Why not pyrfc.** pyrfc 3.x needs SDK 7.50, whose server replies in Unicode
-  (codepage 4103); a 4.5B kernel dumps with `CALL_FUNCTION_FORMAT_NOT_SUP`.
-  SDK 7.20 replies in codepage 1401 and reaches back to 4.0B, so both
-  directions run on it through ctypes. Never load two SDK generations in one
-  process.
+- **Why ctypes and not pyrfc.** pyrfc 3.x is tied to SDK 7.50, whose server
+  replies in Unicode (codepage 4103); a 4.5B kernel dumps with
+  `CALL_FUNCTION_FORMAT_NOT_SUP`. The own binding runs on 7.50 for Unicode
+  backends and on 7.20 for non-Unicode ones (it replies in codepage 1401 and
+  reaches back to 4.0B); both directions use the one SDK loaded. Never load
+  two SDK generations in one process.
 - **Handlers.** Every module in `handlers/` is imported at startup; decorate
   a function with `@handler("FM_NAME")`. IMPORT/CHANGING/TABLES parameters
   arrive as keyword arguments (structures as dicts, tables as lists of dicts);
