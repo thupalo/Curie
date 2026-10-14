@@ -4,7 +4,7 @@ Curie is a Python service that puts an LLM chat inside SAP. A user starts
 transaction `ZAI` in the SAP GUI, a Chrome window opens, and the model can
 read tables and the dictionary through RFC, write ABAP reports, and run them
 in SAP after a syntax check, a security review and the user's confirmation.
-It works with **SAP R/3 4.5B** (non-Unicode) and **ECC 6**.
+It works with **ECC 6** and even with **SAP R/3 4.5B** (non-Unicode, NW RFC SDK 7.20 required) 
 
 The full documentation is in [docs/](docs/README.md): architecture,
 installation, configuration reference, SAP objects, session lifecycle, the
@@ -24,12 +24,17 @@ Chrome window ◄──────────────────► curie
                      background job ZAI_RUNNER ──RFC──► Z_AI_LIST_DELIVER
 ```
 
+## Demo
+
+https://youtu.be/Wvq-lqF_mdA
+https://youtu.be/Mun0lyA23ro
+
 ## Requirements
 
 | | |
 |---|---|
 | Python | 3.12 (Windows) |
-| NW RFC SDK 7.20 | `C:\nwrfcsdk` (`SAPNWRFC720_HOME`) — the only SDK; both directions use it |
+| NW RFC SDK 7.50 or NW RFC SDK 7.20 | `C:\nwrfcsdk` (`SAPNWRFC720_HOME`) — the only SDK; both directions use it |
 | SAP side | SM59 destination `SAP_AI` (type T, registered server), the `ZAIC` package (function group `ZAIC`, reports, transaction `ZAI`) from [abap/](abap/) |
 | LLM | any endpoint with the OpenAI chat completions API (OpenAI, Azure, vLLM, Ollama, ...) |
 | End-user PC | Chrome, network access to `WEB_PUBLIC_URL` |
@@ -125,7 +130,7 @@ need a decision:
 | Variable | Meaning |
 |---|---|
 | `RFC_*` | SAP logon and gateway registration (as before) |
-| `SAP_RELEASE` | `45B` or `ECC6`; empty = autodetect. Chooses the ABAP dialect in the prompts and the 72/255 line width |
+| `SAP_RELEASE` | `ECC6` or `45B`; empty = autodetect. Chooses the ABAP dialect in the prompts and the 72/255 line width |
 | `SAP_LANGU` | one-character `SY-LANGU` for `RFC_GET_*_P` (derived from `RFC_LANG`, `PL` → `L`) |
 | `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_AUDIT_MODEL` | the model endpoint |
 | `WEB_PUBLIC_URL` | the URL SAP hands to Chrome; must resolve from the end-user PCs |
@@ -139,7 +144,7 @@ need a decision:
 |---|---|
 | [src/curie/cli.py](src/curie/cli.py) | entry point (`curie`, `python -m curie`): RFC server threads + uvicorn in one process, `--check`, `--selftest` |
 | [src/curie/config.py](src/curie/config.py) | settings, release profiles, ISO → SAP language key |
-| [src/curie/sapnwrfc720.py](src/curie/sapnwrfc720.py) | ctypes binding to NW RFC SDK 7.20: `Server` and `Client` |
+| [src/curie/sapnwrfc720.py](src/curie/sapnwrfc720.py) | ctypes binding to NW RFC SDK 7.20 (7.50): `Server` and `Client` |
 | [rfc/client.py](src/curie/rfc/client.py) | connection pool, blocking and async calls, interface-aware `call_known` |
 | [handlers/](src/curie/handlers/) | function modules served to SAP; `session.py` holds the `Z_AI_*` ones |
 | [sessions/](src/curie/sessions/) | session model, state machine, `SessionManager`, JSONL audit log |
@@ -153,7 +158,7 @@ need a decision:
 ## The RFC server underneath
 
 Curie's server direction is the registered RFC server this repository started
-as. The reasons for the 7.20 SDK, the handler contract, parallel calls and
+as. Use NW RFC SDK 7.50 or NW RFC SDK 7.20 (non-unicode) The reasons for the NW RFC SDK, the handler contract, parallel calls and
 troubleshooting are unchanged:
 
 - **Why not pyrfc.** pyrfc 3.x needs SDK 7.50, whose server replies in Unicode
