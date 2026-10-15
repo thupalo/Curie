@@ -11,9 +11,7 @@ system runs on NW RFC SDK 7.50, an old non-Unicode system needs NW RFC SDK
 The full documentation is in [docs/](docs/README.md): architecture,
 installation, configuration reference, SAP objects, session lifecycle, the
 model and tools, the ABAP execution path, the web API, security, operations,
-development, and status. The design it grew from is
-[../CURIE_PLAN.md](../CURIE_PLAN.md); the SAP-side sources and notes are in
-[abap/](abap/README.md).
+development, and status. 
 
 ```
 SAP GUI: ZAI_START ──RFC──► Curie (registered server SAP_AI)
@@ -29,6 +27,7 @@ Chrome window ◄──────────────────► curie
 ## Demo
 
 https://youtu.be/Wvq-lqF_mdA
+
 https://youtu.be/Mun0lyA23ro
 
 ## Requirements

@@ -1,13 +1,3 @@
-# Curie – SAP-side objects
-
-Everything in this directory is written for **SAP R/3 4.5B** (no ABAP
-Objects, no STRING, 72-column source, `OCCURS ... WITH HEADER LINE`) and is
-also valid on **ECC 6.0**. Sources are meant to be pasted into SE38/SE37;
-there is no transport file.
-
-See `CURIE_PLAN.md` sections 4.1–4.4 for the design; this README is the
-installation guide.
-
 ## Files
 
 | File | Object | Kind |
@@ -21,8 +11,8 @@ installation guide.
 
 ## What each object does
 
-- **ZAI_LINE / ZAI_LISTLINE** – line structures for source code (72 chars on
-  4.5B) and list output (255 chars). **ZAI_PARAMS** – only supplies typed
+- **ZAI_LINE / ZAI_LISTLINE** – line structures for source code (72 chars)
+  and list output (255 chars). **ZAI_PARAMS** – only supplies typed
   reference fields for the RFC interfaces.
 - **Z_AI_SESSION_OPEN / Z_AI_HEARTBEAT / Z_AI_SESSION_CLOSE /
   Z_AI_LIST_DELIVER** – called by SAP *into* Curie through destination
